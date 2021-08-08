@@ -1,5 +1,9 @@
 # Serverless Challenge
 
+## Documentation
+
+[https://documenter.getpostman.com/view/1086515/TzskDiBT](https://documenter.getpostman.com/view/1086515/TzskDiBT)
+
 ## Usage
 
 ### Deployment
@@ -20,6 +24,4 @@ npm start
 npm test
 ```
 
-## Documentation
-
-[https://documenter.getpostman.com/view/1086515/TzskDiBT](https://documenter.getpostman.com/view/1086515/TzskDiBT)
+![Jest](https://github.com/lourivaldo/serverless-challenge/blob/assets/jest.png?raw=true)

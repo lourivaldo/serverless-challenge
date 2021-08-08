@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+
+# Serverless
+.serverless
+
+# Dynamodb
+.dynamodb
+
+# Webpack
+.webpack
+
+# Output
+dist
+.build
+
+# Dotenv files
+.env*.local
+
+# Error logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.idea

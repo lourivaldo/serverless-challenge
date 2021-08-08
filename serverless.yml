@@ -1,0 +1,94 @@
+org: lourivaldo
+app: serverless-challenge
+service: serverless-challenge
+
+frameworkVersion: '2'
+
+custom:
+  tableName: 'employees-table-${self:provider.stage}'
+  bundle:
+    linting: false
+  serverless-offline:
+    httpPort: 3000
+    noPrependStageInUrl: true
+  dynamodb:
+    start:
+      port: 8000
+      migrate: true
+      seed: true
+    stages:
+      - dev
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 512
+  timeout: 10
+  lambdaHashingVersion: '20201221'
+  stage: dev
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ EmployeesTable, Arn ]
+            - arn:aws:dynamodb:us-east-1:*:*
+
+  environment:
+    EMPLOYEES_TABLE: ${self:custom.tableName}
+
+functions:
+  api:
+    handler: src/handler.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+
+resources:
+  Resources:
+    EmployeesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: employeeId
+            AttributeType: S
+          - AttributeName: employeeName
+            AttributeType: S
+        KeySchema:
+          - AttributeName: employeeId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:custom.tableName}
+        GlobalSecondaryIndexes:
+          - IndexName: EmployeesNameIndex
+            KeySchema:
+              - AttributeName: employeeName
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+
+package:
+  individually: true
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-bundle
+  - serverless-dynamodb-local
+  - serverless-offline
